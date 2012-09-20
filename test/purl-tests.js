@@ -94,15 +94,23 @@ testSuite = function(url) {
 }
 
 describe("purl in non-strict mode", function () {
-
     testSuite(purl('http://allmarkedup.com/folder/dir/index.html?item=value&item2=foobar#foo'));
-
 });
 
 
 describe("purl in strict mode", function () {
-
     testSuite(purl('http://allmarkedup.com/folder/dir/index.html?item=value&item2=foobar#foo',
                    true));
+});
 
+describe("url('/path/subpath')", function() {
+    it('param is {}', function() {
+        var url = purl('/path/subpath');
+        assert.equals(url.param(), {});
+    });
+    it('test1', function() {
+        var url = purl('/path/subpath');
+        console.log(url.generate());
+        assert.equals(url.generate(), '/path/subpath');
+    });
 });

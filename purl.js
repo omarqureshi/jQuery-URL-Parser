@@ -136,6 +136,9 @@
     }
 
     function parseString(str) {
+        if (str == '')
+            return {};
+
         return reduce(String(str).split(/&|;/), function(ret, pair) {
             try {
                 pair = decodeURIComponent(pair.replace(/\+/g, ' '));
@@ -263,7 +266,10 @@
 
             // Return generated url from object data
             generate: function() {
-                var buffer = this.data.attr.protocol + '://' + this.data.attr.host;
+                var buffer = "";
+                if (this.data.attr.host != '') {
+                    buffer += this.data.attr.protocol + '://' + this.data.attr.host;
+                }
                 buffer += this.data.attr.path;
                 if (Object.keys(this.data.param.query).length > 0) {
                     buffer += '?';
