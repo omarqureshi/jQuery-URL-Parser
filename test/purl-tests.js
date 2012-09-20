@@ -19,7 +19,7 @@ testSuite = function(url) {
     });
 
     it('should have a relative path of /folder/dir/index.html?item=value#foo', function() {
-        expect(url.attr('relative')).toBe('/folder/dir/index.html?item=value#foo');
+        expect(url.attr('relative')).toBe('/folder/dir/index.html?item=value&item2=foobar#foo');
     });
 
     it('should have a path of /folder/dir/index.html', function() {
@@ -35,7 +35,7 @@ testSuite = function(url) {
     });
 
     it('should have a querystring of item=value', function() {
-        expect(url.attr('query')).toBe('item=value');
+        expect(url.attr('query')).toBe('item=value&item2=foobar');
     });
 
     it('should have an anchor of foo', function() {
@@ -43,8 +43,10 @@ testSuite = function(url) {
         expect(url.attr('fragment')).toBe('foo');
     });
 
-    it('should have a param() of item: "value"', function() {
-        expect(url.param()).toBeObject({item: 'value'}) 
+    it('should have a param() of item: "value", item2: "foobar"', function() {
+        var p = url.param();
+        expect(p['item']).toBe('value');
+        expect(p['item2']).toBe('foobar');
     });
 
     it('should have a param("item") of "value"', function() {
@@ -62,18 +64,45 @@ testSuite = function(url) {
     it('should have a segment(-1) of "folder"', function() {
         expect(url.segment(-1)).toBe("index.html");
     });
+
+    it('test generate', function() {
+        expect(url.generate()).toBe("http://allmarkedup.com/folder/dir/index.html?item=value&item2=foobar#foo");
+    });
+
+    it('test generate after "item" param updated', function() {
+        url.param('item', 'value2');
+        expect(url.generate()).toBe("http://allmarkedup.com/folder/dir/index.html?item=value2&item2=foobar#foo");
+    });
+
+    it('test generate after "item2" param remove', function() {
+        url.removeParam('item2');
+        expect(url.generate()).toBe("http://allmarkedup.com/folder/dir/index.html?item=value2#foo");
+    });
+
+    it('test generate after append "item3" param', function() {
+        url.param('item3', 87);
+        expect(url.generate()).toBe("http://allmarkedup.com/folder/dir/index.html?item=value2&item3=87#foo");
+    });
+
+    it('test generate after replace all params', function() {
+        url.param({
+            'item4': 88,
+            'item5': 42
+        });
+        expect(url.generate()).toBe("http://allmarkedup.com/folder/dir/index.html?item4=88&item5=42#foo");
+    });
 }
 
 describe("purl in non-strict mode", function () {
 
-    testSuite(purl('http://allmarkedup.com/folder/dir/index.html?item=value#foo'));
+    testSuite(purl('http://allmarkedup.com/folder/dir/index.html?item=value&item2=foobar#foo'));
 
 });
 
 
 describe("purl in strict mode", function () {
 
-    testSuite(purl('http://allmarkedup.com/folder/dir/index.html?item=value#foo',
+    testSuite(purl('http://allmarkedup.com/folder/dir/index.html?item=value&item2=foobar#foo',
                    true));
 
 });
